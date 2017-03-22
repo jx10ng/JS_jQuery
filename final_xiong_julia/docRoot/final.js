@@ -1,6 +1,5 @@
 var divReg;
 var divMain;
-//comment added	
 document.addEventListener("DOMContentLoaded", function(){
 	
 	//for #divRegistered
@@ -31,14 +30,25 @@ document.addEventListener("DOMContentLoaded", function(){
 	}
 	*/
 
-	//event handler for login with min length = 7 and max = 15
+
+	//event handler for checking login with min length = 7 and max = 15
 	inputElements[0].addEventListener("blur", function(){
-		fCheckLogin(inputElements[0].value,spanElements[0]);
+		fCheckSame(inputElements[0].value,spanElements[0]);
 	});
+	//event handler for password length
+	//inputElements[1].addEventListener("blur", function(){
+		//fCheckLength(inputElements[1].value, spanElements[1]);
+
+	//});
 
 	//event handler for password, compares password values after blur on second value
 	inputElements[2].addEventListener("blur", function(){
 		fCompareInput(inputElements[1].value, inputElements[2].value, spanElements[2]);
+	});
+
+	//event handler for email validity with @ and .
+	inputElements[3].addEventListener("blur", function(){
+		fCheckEmail(inputElements[3], spanElements[3]);
 	});
 
 	//event handler for email, compares email values after blur on second value
@@ -46,8 +56,21 @@ document.addEventListener("DOMContentLoaded", function(){
 		fCompareInput(inputElements[3].value, inputElements[4].value, spanElements[4]);
 	});
 
-	fProcessForm()
+	//check that all fields are filled in on submit
+	$(document).ready(function() {
+		$('#frmRegister').submit(function() {
+			//note: $.trim gets rid of white space //note: val() gets value, .value didn't work
+		    if ($.trim($("#txtLogin").val()) === "" || $.trim($("#txtPassword").val()) === "" || $.trim($("#txtConfirmPassword").val()) === "" ||$.trim($("#txtEmail").val()) === "" ||$.trim($("#txtConfirmEmail").val()) === "") {
+		        alert("Fill out all fields");
+		        return false;
+		    }
+		});
+	});
+
+	fProcessForm(inputElements);
 });
+
+
 
 
 //function for changing style background-color to yellow
@@ -55,13 +78,15 @@ function fHandleEnter(e){
 	e.target.style.backgroundColor = "yellow";
 }
 
+
 //function for changing style background-color to white
 function fHandleExit(e){
 	e.target.style.backgroundColor = "white";
 }
 
+
 //function for form submission
-function fProcessForm(){
+function fProcessForm(inputElements){
 	//best to use decodeURIComponent even if location.search is simple, may have special characters
 	var strQueryString = decodeURIComponent(location.search); 
 	
@@ -100,15 +125,17 @@ function fProcessForm(){
 	}
 }
 
+
 //function to compare Email and Password input values
 function fCompareInput(value1, value2, display){
 	//if at least one value is empty
 	if (value1.length == 0 || value2.length == 0) {
 		display.innerHTML = "Missing Entry"; 
-		display.style = "";
+		display.style.backgroundColor = "red";
 	}
+
 	//if both value1 and value2 exist
-	else {
+	//else {
 		//if value1 and value2 are equal
 		if (value1==value2) {
 			display.innerHTML = "Entries match";
@@ -120,30 +147,47 @@ function fCompareInput(value1, value2, display){
 			display.style.backgroundColor = "red";
 
 		}
-	}
+	//}
 
 }
 
+
 //function to check length requirement 7-15 characters
-function fCheckLogin(value0, display){
+function fCheckSame(value, display){
 	//if login length < 7
-	if (value0.length < 7) {
-		display.innerHTML = "Length: " + value0.length + ". Need 7-15 characters";
+	if (value.length < 7) {
+		display.innerHTML = "Length: " + value.length + ". Need 7-15 characters";
 		display.style.backgroundColor = "red";
+		//return false;
 	}
 	//if login length >15
-	if (value0.length > 15) {
-		display.innerHTML = "Length: " + value0.length + ". Need 7-15 characters";
+	if (value.length > 15) {
+		display.innerHTML = "Length: " + value.length + ". Need 7-15 characters";
 		display.style.backgroundColor = "red";
+		//return false;
 	}
 	//if login is between 7-15 characters
-	if (value0.length >= 7 && value0.length <= 15) {
+	if (value.length >= 7 && value.length <= 15) {
 		display.innerHTML = "Valid";
 		display.style.backgroundColor = "green";
 	}
 
 }
 
-
-
+//function to check validity of email with an @ and .
+function fCheckEmail(email, display) {
+    var x = email.value;
+    var atPos = x.indexOf("@"); //positon of the @
+    var dotPos = x.lastIndexOf("."); //position of the .
+    //if email is invalid
+    if (atPos < 1 || dotPos < atPos + 2 || dotPos + 2 >= x.length) {
+        display.innerHTML = "Not Valid";
+		display.style.backgroundColor = "red";
+    }
+    //if email is valid
+    else {
+    	display.innerHTML = "Valid";
+		display.style.backgroundColor = "green";
+    }
+}
 
